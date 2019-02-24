@@ -114,7 +114,7 @@ if CLIENT then
 	end
 
 	function HUDELEMENT:RecalculateBasePos()
-		self:SetBasePos(ScrW() - (width + self.margin * 2), ScrH() - self.margin)
+		self:SetBasePos(ScrW() - (width * self:GetScale() + self.margin * 2), ScrH() - self.margin)
 	end
 	
 	function HUDELEMENT:PerformLayout()
@@ -133,7 +133,7 @@ if CLIENT then
 		local weps = WSWITCH.WeaponCache
 		local count = #weps
 		local tmp = height + self.margin
-		local h = count * tmp
+		local h = count * tmp * self:GetScale()
 		local basepos = self:GetBasePos()
 
 		self:SetPos(basepos.x, basepos.y)

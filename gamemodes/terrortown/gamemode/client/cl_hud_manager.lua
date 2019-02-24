@@ -78,6 +78,7 @@ local function EditLocalHUD()
 						local difPos = elem:GetPos()
 						local difBasePos = elem:GetBasePos()
 						local difSize = elem:GetSize()
+						local scale = elem:GetScale()
 
 						client.difX = x - difPos.x
 						client.difY = y - difPos.y
@@ -98,22 +99,23 @@ local function EditLocalHUD()
 		local difH = client.difH or 0
 
 		if elem and (client.oldMX and client.oldMX ~= x or client.oldMY and client.oldMY ~= y) then
-			local size = elem:GetSize()
-
+			local w, h = elem:GetSize().w * elem:GetScale(), elem:GetSize().h * elem:GetScale()
+			local pure_size = elem:GetSize()
+			
 			if mode == 0 then
 				local nx = x - difX
 				local ny = y - difY
 
 				if nx < 0 then
 					nx = 0
-				elseif nx + size.w > ScrW() then
-					nx = ScrW() - size.w
+				elseif nx + w > ScrW() then
+					nx = ScrW() - w
 				end
 
 				if ny < 0 then
 					ny = 0
-				elseif ny + size.h > ScrH() then
-					ny = ScrH() - size.h
+				elseif ny + h > ScrH() then
+					ny = ScrH() - h
 				end
 
 				elem:SetBasePos(nx + client.difBaseX, ny + client.difBaseY)
@@ -129,7 +131,7 @@ local function EditLocalHUD()
 					nh = 1
 				end
 
-				elem:SetSize(elem.defaults.resizeableX and nw or size.w, elem.defaults.resizeableY and nh or size.h)
+				elem:SetSize(elem.defaults.resizeableX and nw or pure_size.w, elem.defaults.resizeableY and nh or pure_size.h)
 			end
 
 			elem:PerformLayout()
@@ -359,11 +361,28 @@ function HUDManager.DrawHUD()
 		end
 
 		if elem.initialized and elem.type and hud:ShouldShow(elem.type) and hook.Call("HUDShouldDraw", GAMEMODE, elem.type) then
-			elem:Draw()
+			local pos = elem:GetPos()
+			local size = elem:GetSize()
+			local scale = elem:GetScale()
+			
+			local mat = Matrix()
+
+			mat:Translate( Vector( pos.x, pos.y ) )
+			mat:Scale( Vector( scale, scale, scale ))
+			mat:Translate( -Vector( pos.x, pos.y ) )
+			
+			render.PushFilterMag( TEXFILTER.ANISOTROPIC )
+			render.PushFilterMin( TEXFILTER.ANISOTROPIC )
+			cam.PushModelMatrix( mat )
+				elem:Draw()
 
 			if HUDManager.IsEditing and not client.activeElement then
 				elem:DrawSize()
 			end
+			
+			cam.PopModelMatrix()
+			render.PopFilterMag()
+			render.PopFilterMin()
 		end
 	end
 end

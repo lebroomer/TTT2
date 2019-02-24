@@ -24,7 +24,7 @@ if CLIENT then
 	end
 
 	function HUDELEMENT:RecalculateBasePos()
-		self:SetBasePos(math.Round(ScrW() * 0.5 - w * 0.5), 4)
+		self:SetBasePos(math.Round(ScrW() * 0.5 - w * self:GetScale() * 0.5), 4)
 	end
 	
 	function HUDELEMENT:PerformLayout()

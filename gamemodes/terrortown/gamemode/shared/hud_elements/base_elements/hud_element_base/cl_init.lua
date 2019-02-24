@@ -13,10 +13,12 @@ local zero_tbl_size = {
 HUDELEMENT.basepos = table.Copy(zero_tbl_pos)
 HUDELEMENT.pos = table.Copy(zero_tbl_pos)
 HUDELEMENT.size = table.Copy(zero_tbl_size)
+HUDELEMENT.scale = 1.5
 
 HUDELEMENT.defaults = {
 	basepos = table.Copy(HUDELEMENT.basepos),
 	size = table.Copy(HUDELEMENT.size),
+	scale = HUDELEMENT.scale,
 	minHeight = 0,
 	minWidth = 0,
 	resizeableX = true,
@@ -136,6 +138,14 @@ function HUDELEMENT:SetSize(w, h)
 	self.size.h = h
 end
 
+function HUDELEMENT:GetScale()
+	return self.scale
+end
+
+function HUDELEMENT:SetScale(scale)
+	self.scale = scale
+end
+
 function HUDELEMENT:GetParent()
 	return self.parent, self.parent_is_type
 end
@@ -173,7 +183,7 @@ function HUDELEMENT:IsInRange(x, y, range)
 	range = range or 0
 
 	local minX, minY = self.pos.x, self.pos.y
-	local maxX, maxY = minX + self.size.w, minY + self.size.h
+	local maxX, maxY = minX + self.size.w * self.scale, minY + self.size.h * self.scale
 
 	return x - range <= maxX and x + range >= minX and y - range <= maxY and y + range >= minY
 end
@@ -223,7 +233,8 @@ end
 
 local savingKeys = {
 	basepos = {typ = "pos"},
-	size = {typ = "size"}
+	size = {typ = "size"},
+	scale = {typ = "scale"}
 }
 
 function HUDELEMENT:GetSavingKeys()

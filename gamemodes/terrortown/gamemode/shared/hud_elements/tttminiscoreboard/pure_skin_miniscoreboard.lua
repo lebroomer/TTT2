@@ -32,7 +32,8 @@ if CLIENT then
 	function HUDELEMENT:PerformLayout()
 		local parent_pos = parentInstance:GetPos()
 		local parent_size = parentInstance:GetSize()
-
+		local parent_scale = parentInstance:GetScale()
+		
 		local height = parent_size.h
 
 		ply_ind_size = math.Round((height - element_margin - margin * 2) * 0.5)
@@ -47,7 +48,7 @@ if CLIENT then
 
 		local width = element_margin * (column_count - 1) + ply_ind_size * column_count + 2 * margin
 
-		self:SetPos(parent_pos.x + parent_size.w, parent_pos.y)
+		self:SetPos(parent_pos.x + parent_size.w * parent_scale, parent_pos.y)
 		self:SetSize(width, height)
 
 		BaseClass.PerformLayout(self)

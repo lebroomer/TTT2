@@ -28,7 +28,7 @@ if CLIENT then
 	end
 
 	function HUDELEMENT:RecalculateBasePos()
-		self:SetBasePos(10, ScrH() - (10 + h))
+		self:SetBasePos(10, ScrH() - (10 + h * self:GetScale()))
 	end
 	
 	function HUDELEMENT:PerformLayout()
@@ -156,6 +156,12 @@ if CLIENT then
 
 			--create scaling matrix for the text
 			local mat = Matrix()
+			
+			--push scaling mat again because pushing overrides the old mat
+			mat:Translate(Vector(x, y))
+			mat:Scale(Vector(self:GetScale(), self:GetScale(), self:GetScale()))
+			mat:Translate(-Vector(x, y))
+			
 			mat:Translate(Vector(nx, ry))
 			mat:Scale(Vector(role_scale_multiplier * 0.9, role_scale_multiplier, role_scale_multiplier))
 			mat:Translate(-Vector(nx, ry))
